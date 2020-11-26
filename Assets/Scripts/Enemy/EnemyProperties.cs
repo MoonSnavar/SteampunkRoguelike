@@ -45,6 +45,6 @@ public class EnemyProperties : MonoBehaviour
     }
     private void OnDestroy()
     {        
-        currentRoom?.OpenRoom();
+        currentRoom?.OpenRoomAndChest();
     }    
 }

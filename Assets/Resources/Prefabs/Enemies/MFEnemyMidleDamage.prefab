@@ -18,7 +18,7 @@ GameObject:
   - component: {fileID: 5706818040467481495}
   - component: {fileID: 6701960128283983705}
   m_Layer: 11
-  m_Name: UniversalEnemy 1
+  m_Name: MFEnemyMidleDamage
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,6 +154,7 @@ MonoBehaviour:
   MovementSpeed: 100
   AttackSpeed: 2
   AttackRange: 1
+  TargetRange: 10
   ChanceOfDefaultDrop: 0.8
   DropList:
   - {fileID: 3960888396986616487, guid: 684e5771eeb6d7a439b5e094bede0f06, type: 3}
@@ -161,6 +162,8 @@ MonoBehaviour:
   - {fileID: 7298322298051222067, guid: ddca18987d75e304d852d31cd168835d, type: 3}
   - {fileID: 1651445201962031833, guid: 037393ad17d941c448f9e4ea2debe49c, type: 3}
   - {fileID: 1785552473288950723, guid: d0c60cceab32fc04d87ec226522fc9de, type: 3}
+  - {fileID: 4790501288625463748, guid: 916552b6b9db7694fb70bb0c397f5090, type: 3}
+  - {fileID: 8610147695400167755, guid: 0af82d57ed363ba47b6f074d345b3487, type: 3}
 --- !u!114 &5706818040467481495
 MonoBehaviour:
   m_ObjectHideFlags: 0

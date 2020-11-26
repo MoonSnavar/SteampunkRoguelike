@@ -20,6 +20,8 @@ public class Bomb : MonoBehaviour
                 hitObject.GetComponent<PlayerProperties>().TakeDamage(4 * GameManager.instance.LevelNumber);
             else if (hitObject.GetComponent<EnemyProperties>() != null)
                 hitObject.GetComponent<EnemyProperties>().TakeDamage(4 * GameManager.instance.LevelNumber);
+            else if (hitObject.tag == "SecretWall")
+                Destroy(hitObject.gameObject);
         }
         Destroy(Instantiate(ExplosionEffect, transform.position, transform.rotation), 2f);
         Destroy(gameObject);

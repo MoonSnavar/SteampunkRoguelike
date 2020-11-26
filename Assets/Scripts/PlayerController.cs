@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -167,6 +168,10 @@ public class PlayerController : MonoBehaviour
         if (collision.CompareTag("Room"))
         {
             StartCoroutine(MoveCamera(new Vector3(collision.transform.position.x, collision.transform.position.y, -10), collision.GetComponent<Room>()));
+        }
+        else if (collision.CompareTag("Exit"))
+        {
+            SceneManager.LoadScene(0);
         }
     }
 

@@ -2,11 +2,13 @@
 
 public class SelectRandom : MonoBehaviour
 {
+    public bool isEnemy;
     public int CountToLeave = 1;
 
     private void Start()
     {
-        CountToLeave += GameManager.instance.LevelNumber;
+        if (isEnemy)
+            CountToLeave += GameManager.instance.LevelNumber;
 
         while (transform.childCount > CountToLeave)
         {

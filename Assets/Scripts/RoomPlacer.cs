@@ -7,7 +7,10 @@ public class RoomPlacer : MonoBehaviour
     public static RoomPlacer instance;
     public Room[] RoomPrefabs;
     public Room StartingRoom;
+    public Room LastRoom;
+    public Room SecretRoom;
 
+    public int maxRooms = 12;
     private Room[,] spawnedRooms;
 
     private void Awake()
@@ -20,13 +23,13 @@ public class RoomPlacer : MonoBehaviour
         spawnedRooms = new Room[11, 11];
         spawnedRooms[5, 5] = StartingRoom;
 
-        for (int i = 0; i < 12; i++)
+        for (int i = 0; i < maxRooms; i++)
         {            
-            PlaceOneRoom();
+            PlaceOneRoom(i);
         }
     }
 
-    private void PlaceOneRoom()
+    private void PlaceOneRoom(int i)
     {
         HashSet<Vector2Int> vacantPlaces = new HashSet<Vector2Int>();
         for (int x = 0; x < spawnedRooms.GetLength(0); x++)
@@ -45,22 +48,36 @@ public class RoomPlacer : MonoBehaviour
             }
         }
 
-        // Эту строчку можно заменить на выбор комнаты с учётом её вероятности, вроде как в ChunksPlacer.GetRandomChunk()
-        Room newRoom = Instantiate(RoomPrefabs[Random.Range(0, RoomPrefabs.Length)]);
+        Room newRoom;
+        if (i == maxRooms - 6)
+        {
+            newRoom = Instantiate(SecretRoom);
+        }
+        else if (i != maxRooms - 1)
+        {
+            // Эту строчку можно заменить на выбор комнаты с учётом её вероятности, вроде как в ChunksPlacer.GetRandomChunk()
+            newRoom = Instantiate(RoomPrefabs[Random.Range(0, RoomPrefabs.Length)]);
+        }
+        else
+            newRoom = Instantiate(LastRoom);
+
 
         int limit = 500;
         while (limit-- > 0)
         {
             // Эту строчку можно заменить на выбор положения комнаты с учётом того насколько он далеко/близко от центра,
             // или сколько у него соседей, чтобы генерировать более плотные, или наоборот, растянутые данжи
-            Vector2Int position = vacantPlaces.ElementAt(Random.Range(0, vacantPlaces.Count));
-            //newRoom.RotateRandomly();
+            Vector2Int position = vacantPlaces.ElementAt(Random.Range(0, vacantPlaces.Count));            
 
             if (ConnectToRoom(newRoom, position))
             {                
                 newRoom.transform.position = new Vector3((position.x - 5) * 18, (position.y - 5) * 10, 0);
                 spawnedRooms[position.x, position.y] = newRoom;
                 return;
+            }
+            else
+            {
+                newRoom.RotateRandomly();
             }
         }
 

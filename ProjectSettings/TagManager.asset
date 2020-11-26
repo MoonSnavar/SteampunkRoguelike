@@ -11,6 +11,9 @@ TagManager:
   - Equipment
   - Room
   - Walls
+  - Chest
+  - Exit
+  - SecretWall
   layers:
   - Default
   - TransparentFX

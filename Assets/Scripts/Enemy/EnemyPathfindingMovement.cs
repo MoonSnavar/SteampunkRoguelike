@@ -32,7 +32,7 @@ public class EnemyPathfindingMovement : MonoBehaviour
         {
             if (seeker.IsDone())
                 seeker.StartPath(rb.position, target, OnPathComplete);           
-            nextFollow = Time.time + 0.5f;
+            nextFollow = Time.time + 0.2f;
         }
     }
 
