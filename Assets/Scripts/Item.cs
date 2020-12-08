@@ -28,4 +28,10 @@ public class Item : MonoBehaviour
     public float AS;
     [Range(0, 1)]
     public float CDC;
+
+    private void Start()
+    {        
+        ParticleSystem.MainModule psMain = GetComponentInChildren<ParticleSystem>().main;
+        psMain.startColor = Inventory.instance.GetColorByRarity(Rarity);
+    }
 }

@@ -2,16 +2,22 @@
 
 public class PlayerCombat : MonoBehaviour
 {
+    public SpriteRenderer GunSprite;
+    public SpriteRenderer WeaponSprite;
     public GameObject Bullet;
     public Transform AttackPoint;
     public float AttackSize;
     public LayerMask EnemyLayer;
     private int damagePoints;
     private PlayerProperties playerProperties;
+    private Animator animator;
+    private PlayerController playerController;
 
     private void Awake()
     {
         playerProperties = GetComponent<PlayerProperties>();
+        playerController = GetComponent<PlayerController>();
+        animator = GetComponent<Animator>();
     }
     public void MeleeAttack(float x, float y, bool saveLastDirection)
     {
@@ -25,10 +31,64 @@ public class PlayerCombat : MonoBehaviour
         {            
             if (hitEnemy.isTrigger)
                 hitEnemy.GetComponent<EnemyProperties>().TakeDamage(damagePoints);
-        }        
+        }
+        AnimationMelee();
     }
 
-    int lastX, lastY;
+    private void AnimationMelee()
+    {
+        WeaponSprite.sprite = Inventory.instance.GetSpriteCurrentItem();
+        if (AttackPoint.localPosition.y < 0)
+        {
+            if (playerController.Graphics.localScale.x < 0)
+                playerController.Flip();
+            animator.SetTrigger("AttackDown");
+        }
+        else if (AttackPoint.localPosition.y > 0)
+        {
+            if (playerController.Graphics.localScale.x < 0)
+                playerController.Flip();
+            animator.SetTrigger("AttackUp");
+        }
+        if (AttackPoint.localPosition.x > 0)
+        {
+            animator.SetTrigger("AttackRight");
+        }
+        else if (AttackPoint.localPosition.x < 0)
+        {
+            if (playerController.Graphics.localScale.x > 0)
+                playerController.Flip();
+            animator.SetTrigger("AttackLeft");
+        }
+    }
+
+    private void AnimationShoot()
+    {
+        GunSprite.sprite = Inventory.instance.GetSpriteCurrentItem();
+        if (AttackPoint.localPosition.y < 0)
+        {
+            if (playerController.Graphics.localScale.x < 0)
+                playerController.Flip();
+            animator.SetTrigger("ShootDown");
+        }
+        else if (AttackPoint.localPosition.y > 0)
+        {
+            if (playerController.Graphics.localScale.x < 0)
+                playerController.Flip();
+            animator.SetTrigger("ShootUp");
+        }
+        if (AttackPoint.localPosition.x > 0)
+        {
+            animator.SetTrigger("ShootRight");
+        }
+        else if (AttackPoint.localPosition.x < 0)
+        {
+            if (playerController.Graphics.localScale.x > 0)
+                playerController.Flip();
+            animator.SetTrigger("ShootLeft");
+        }
+    }
+
     public void Shoot(float x, float y, bool saveLastDirection)
     {
         if (!saveLastDirection)
@@ -43,6 +103,8 @@ public class PlayerCombat : MonoBehaviour
         bulletObject.transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(AttackPoint.localPosition.y, AttackPoint.localPosition.x) * Mathf.Rad2Deg);
         bulletObject.GetComponent<Bullet>().TargetMaskString = "Enemy";
         bulletObject.GetComponent<Bullet>().DamagePoints = damagePoints;
+
+        AnimationShoot();
     }
 
     public void ChangeAttackDirection(float x, float y)

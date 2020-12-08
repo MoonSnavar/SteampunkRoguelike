@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     private PlayerCombat playerCombat;
     private float nextPickupTime = 0f;
     private float attackSpeed;
+    private Animator animator;
 
     void Awake()
     {
@@ -26,13 +27,19 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();        
         playerCombat = GetComponent<PlayerCombat>();
         playerProperties = GetComponent<PlayerProperties>();
-        currentSpeed = playerProperties.StartMovementBaseSpeed;
+        animator = GetComponent<Animator>();        
         attackSpeed = 0;
-        currentRoom = RoomPlacer.instance.StartingRoom;
+        currentSpeed = playerProperties.StartMovementBaseSpeed;
     }
-
+    private void Start()
+    {
+        if (RoomPlacer.instance != null)
+            currentRoom = RoomPlacer.instance.StartingRoom;
+    }
     void Update()
     {
+        currentSpeed = playerProperties.MovementBaseSpeed;
+
         ProcessInputs();            
         Move();
         CheckFlip();      
@@ -47,6 +54,8 @@ public class PlayerController : MonoBehaviour
         }
 
         InputAttackDirection();
+        Animations();
+
         if (Input.GetKey(KeyCode.Space))
             FindAttackDirection();
 
@@ -78,7 +87,7 @@ public class PlayerController : MonoBehaviour
                 if (movementDirection.y > 0)
                     UseItem(0, 0.6f, false);
                 else
-                    UseItem(0, -0.6f, false);
+                    UseItem(0, -0.6f, false);                    
             }           
         }
     }
@@ -105,15 +114,45 @@ public class PlayerController : MonoBehaviour
     private void InputAttackDirection()
     {
         if (Input.GetKey(KeyCode.W))
-            playerCombat.ChangeAttackDirection(0, 0.6f);
+        {
+            playerCombat.ChangeAttackDirection(0, 0.6f);            
+            animator.SetInteger("State", 3);
+        }
         else if (Input.GetKey(KeyCode.S))
+        {
             playerCombat.ChangeAttackDirection(0, -0.6f);
+            animator.SetInteger("State", 4);
+        }
         else if (Input.GetKey(KeyCode.A))
+        {
             playerCombat.ChangeAttackDirection(-0.6f, 0);
+            animator.SetInteger("State", 5);
+        }
         else if (Input.GetKey(KeyCode.D))
+        {
             playerCombat.ChangeAttackDirection(0.6f, 0);
+            animator.SetInteger("State", 5);
+        }
     }
-
+    private void Animations()
+    {
+        if (Input.GetKeyUp(KeyCode.W))
+        {            
+            animator.SetInteger("State", 2);
+        }
+        else if (Input.GetKeyUp(KeyCode.S))
+        {            
+            animator.SetInteger("State", 1);
+        }
+        else if (Input.GetKeyUp(KeyCode.A))
+        {            
+            animator.SetInteger("State", 0);
+        }
+        else if (Input.GetKeyUp(KeyCode.D))
+        {            
+            animator.SetInteger("State", 0);
+        }
+    }
 
     public void ProcessInputs()
     {
@@ -138,7 +177,7 @@ public class PlayerController : MonoBehaviour
             Flip();
     }
 
-    private void Flip()
+    public void Flip()
     {
         //меняем направление движения персонажа
         isFacingRight = !isFacingRight;
@@ -152,13 +191,12 @@ public class PlayerController : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-
-        if (collision.gameObject.layer == LayerMask.NameToLayer("Items") && Input.GetKeyDown(KeyCode.F))
+        if (collision.gameObject.layer == LayerMask.NameToLayer("Items"))
         {
             //кулдаун подбора
             if (Time.time > nextPickupTime)
             {
-                Inventory.instance.AddNewItem(collision.gameObject.GetComponent<Item>());
+                Inventory.instance.AddNewItem(collision.gameObject.GetComponent<Item>(), true);
                 nextPickupTime = Time.time + 0.2f;
             }                   
         }
@@ -171,6 +209,10 @@ public class PlayerController : MonoBehaviour
         }
         else if (collision.CompareTag("Exit"))
         {
+            int currentKeys = PlayerPrefs.GetInt("Keys");
+            if (GameManager.instance.LevelNumber + 1 > currentKeys && GameManager.instance.LevelNumber + 1 < 5)
+                PlayerPrefs.SetInt("Keys", GameManager.instance.LevelNumber + 1);
+            Inventory.instance.SaveItems();
             SceneManager.LoadScene(0);
         }
     }
@@ -183,7 +225,8 @@ public class PlayerController : MonoBehaviour
             yield return null;
             if (GameManager.instance.Camera.position == moveTo)
             {
-                currentRoom.SetActiveEnemies(false);
+                if (currentRoom != null)
+                    currentRoom.SetActiveEnemies(false);
                 currentRoom = room;
                 currentRoom.SetActiveEnemies(true);                
             }

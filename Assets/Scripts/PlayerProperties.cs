@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
+using UnityEngine.UI;
+using Random = UnityEngine.Random;
 
 public class PlayerProperties : MonoBehaviour
 {
     public static PlayerProperties instance;
+    public GameObject LoseMenu;
+
     [Header("Стартовые характеристики:")]
     public int StartHealthPoints = 10;
     public int StartDamagePoints = 10;
@@ -18,6 +23,12 @@ public class PlayerProperties : MonoBehaviour
     public float AttackSpeed;
     public float CriticalDamageChance;
 
+    public Text HPText;
+    public Text DPText;
+    public Text MBSText;
+    public Text ASText;
+    public Text CDCText;
+
     private int maxHp;
 
     private void Awake()
@@ -28,17 +39,21 @@ public class PlayerProperties : MonoBehaviour
     {
         CountStats();
         //регенерация здоровья до максимального
-        Invoke(nameof(RegenerationHP), 1f);
+        InvokeRepeating(nameof(RegenerationHP), 1f, 1f);
     }
     public void CountStats(int HP, int DP,float MBS, float AS, float CDC)
     {
         maxHp = StartHealthPoints + HP;
         DamagePoints = StartDamagePoints + DP;
         MovementBaseSpeed = StartMovementBaseSpeed + MBS;
-        AttackSpeed = StartAttackSpeed - AS;
         CriticalDamageChance = StartCriticalDamageChance + CDC;
+        if (StartAttackSpeed - AS > 0)
+            AttackSpeed = StartAttackSpeed - AS;
+        else
+            AttackSpeed = 0.2f;
 
-        CheckHealPoints();        
+        DisplayProperties();
+        CheckHealPoints();
     }
     private void CountStats()
     {
@@ -47,16 +62,27 @@ public class PlayerProperties : MonoBehaviour
 
     public void TakeDamage(int damage)
     {
-        HealthPoints -= damage;        
+        int takedDamage = HealthPoints - damage;
+        if (takedDamage < 0)
+            HealthPoints = 0;
+        else
+            HealthPoints = takedDamage;
+
+        CheckHealPoints();
+        DisplayProperties();
     }
 
     public void CheckHealPoints()
     {
         if (HealthPoints <= 0)
         {
-            //print("You lose");
+            Time.timeScale = 0;
+            Inventory.instance.SaveItems();
+            LoseMenu.SetActive(true);
         }
     }
+
+
     public int GetDamagePoints()
     {
         int DP = DamagePoints;
@@ -73,6 +99,8 @@ public class PlayerProperties : MonoBehaviour
             HealthPoints = maxHp;
         else
             HealthPoints = heal;
+
+        DisplayProperties();
     }
     private void RegenerationHP()
     {
@@ -81,5 +109,16 @@ public class PlayerProperties : MonoBehaviour
             HealthPoints = maxHp;
         else
             HealthPoints = heal;
+
+        DisplayProperties();
+    }
+
+    public void DisplayProperties()
+    {
+        HPText.text = "ОЗ: " + HealthPoints + "/" + maxHp;
+        DPText.text = "Урон: " + DamagePoints;
+        MBSText.text = "Скорость передвижения: " + MovementBaseSpeed;
+        ASText.text = "Скорость атаки: " + AttackSpeed;
+        CDCText.text = "Шанс критического урона: " + CriticalDamageChance;
     }
 }

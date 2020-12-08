@@ -3,19 +3,20 @@ using Pathfinding;
 
 public class EnemyPathfindingMovement : MonoBehaviour
 {
+    public Animator animator;
     public Transform Target;
     public Transform Graphics;
     public float NextWaypointDistance = 3f;
 
     public Vector2 Force;
     public bool CanMove;
-    private float speed;
+    private int currentWaypoint = 0;   
     private Path path;
-    private int currentWaypoint = 0;
-    private bool reachedEndOfPath = false;
     private Seeker seeker;
     private Rigidbody2D rb;
+    private float speed;
     private float nextFollow;
+    private float rotationSpeed = 0.5f;
 
     private void Awake()
     {
@@ -44,6 +45,11 @@ public class EnemyPathfindingMovement : MonoBehaviour
             currentWaypoint = 0;
         }
     }
+    private void Update()
+    {
+        if (rotationSpeed > 0)
+            rotationSpeed -= Time.deltaTime;
+    }
     private void FixedUpdate()
     {
         if (path == null || !CanMove)
@@ -51,12 +57,7 @@ public class EnemyPathfindingMovement : MonoBehaviour
 
         if (currentWaypoint >= path.vectorPath.Count)
         {
-            reachedEndOfPath = true;
             return;
-        }
-        else
-        {
-            reachedEndOfPath = false;
         }
 
         Vector2 direction = ((Vector2)path.vectorPath[currentWaypoint] - rb.position).normalized;
@@ -69,14 +70,29 @@ public class EnemyPathfindingMovement : MonoBehaviour
         {
             currentWaypoint++;
         }
+
         //Flip
-        if (Force.x >= 0.01f)
+        if (rotationSpeed <= 0)
         {
-            Graphics.localScale = new Vector3(-1f, 1f, 1f);
+            rotationSpeed = 0.5f;
+            if (Mathf.Abs(Force.x) > Mathf.Abs(Force.y))
+            {
+                if (Force.x > 0.5f)
+                    Graphics.localScale = new Vector3(-1f, 1f, 1f);
+                else
+                    Graphics.localScale = new Vector3(1f, 1f, 1f);
+
+                if (animator != null)
+                    animator.SetInteger("State", 5);
+            }
+            else if (animator != null)
+            {
+                if (Force.y > 0)
+                    animator.SetInteger("State", 4);
+                else
+                    animator.SetInteger("State", 3);
+            }
+            
         }
-        else if (Force.x <= -0.01f)
-        {
-            Graphics.localScale = new Vector3(1f, 1f, 1f);
-        }        
     }
 }

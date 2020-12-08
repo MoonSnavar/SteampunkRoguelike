@@ -11,9 +11,14 @@ public class EnemyProperties : MonoBehaviour
     public float TargetRange = 10f;
     [Range(0,1)]
     public float ChanceOfDefaultDrop = 0.8f;    
-    public List<Item> DropList;
+    private Item[] items;
     private float chanceOfDrop = 0.4f;
-    private Room currentRoom;
+    private Room currentRoom;    
+
+    private void Awake()
+    {
+        items = GameManager.instance.items;
+    }
 
     public void TakeDamage(int damage)
     {        
@@ -21,16 +26,16 @@ public class EnemyProperties : MonoBehaviour
 
         if (HealthPoints <= 0)
         {
-            if (DropList.Count > 0 && Random.value < chanceOfDrop)
+            if (items.Length > 0 && Random.value < chanceOfDrop)
             {
-                int randomIndex = Random.Range(0, DropList.Count);
+                int randomIndex = Random.Range(0, items.Length);
 
                 if (Random.value > ChanceOfDefaultDrop)
-                    DropList[randomIndex].Rarity = GameManager.instance.LevelNumber + 1;
+                    items[randomIndex].Rarity = GameManager.instance.LevelNumber + 1;
                 else
-                    DropList[randomIndex].Rarity = GameManager.instance.LevelNumber;
+                    items[randomIndex].Rarity = GameManager.instance.LevelNumber;
 
-                Instantiate(Resources.Load<GameObject>(DropList[randomIndex].PrefabPath), transform.position, transform.rotation);                
+                Instantiate(Resources.Load<GameObject>(items[randomIndex].PrefabPath), transform.position, transform.rotation);                
             }
             Destroy(gameObject);                    
         }

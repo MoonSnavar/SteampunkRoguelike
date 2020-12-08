@@ -17,22 +17,24 @@ public class EnemyCombat : MonoBehaviour
     public Transform AttackPointR;
     public Transform AttackPointT;
     public Transform AttackPointD;
+    public Transform ShootTip;
+    public Animator animator;
 
-    private EnemyPathfindingMovement pathfindingMovement;
     private int damagePoints;
+    private EnemyPathfindingMovement pathfindingMovement;
     private Transform attackPoint;
 
     private void Awake()
     {
         pathfindingMovement = GetComponent<EnemyPathfindingMovement>();
-        damagePoints = GetComponent<EnemyProperties>().DamagePoints;        
+        damagePoints = GetComponent<EnemyProperties>().DamagePoints;
     }
     public void Attack()
     {
         switch (enemyType)
         {
             case EnemyType.Shooter:
-                var bulletObject = Instantiate(Bullet, transform.position, transform.rotation);
+                var bulletObject = Instantiate(Bullet, ShootTip.position, transform.rotation);
                 bulletObject.GetComponent<Bullet>().DamagePoints = GetComponent<EnemyProperties>().DamagePoints;
                 bulletObject.GetComponent<Bullet>().TargetMaskString = "Player";
                 break;
@@ -44,13 +46,23 @@ public class EnemyCombat : MonoBehaviour
                         attackPoint = AttackPointR;
                     else if (pathfindingMovement.Force.x < 0)
                         attackPoint = AttackPointL;
+                    if (animator != null)
+                        animator.SetTrigger("AttackRight");
                 }
                 else
                 {
                     if (pathfindingMovement.Force.y > 0)
+                    {
                         attackPoint = AttackPointT;
+                        if (animator != null)
+                            animator.SetTrigger("AttackUp");
+                    }
                     else if (pathfindingMovement.Force.y < 0)
+                    {
                         attackPoint = AttackPointD;
+                        if (animator != null)
+                            animator.SetTrigger("AttackDown");
+                    }
                 }              
 
                 Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, AttackSize, PlayerLayer);

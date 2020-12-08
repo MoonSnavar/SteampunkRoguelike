@@ -4,7 +4,9 @@ using UnityEngine.UI;
 
 public class Inventory : MonoBehaviour
 {
+    public PlayerProperties playerProperties;
     public static Inventory instance;
+    public GameObject DescriptionPanel;
     [Header("Цвет ячейки, при её активации")]
     public Color SelectedColor;
     public GameObject IconPrefab;
@@ -17,11 +19,11 @@ public class Inventory : MonoBehaviour
 
     private void Awake()
     {
-        instance = this;
+        instance = this;        
     }
 
     private void Start()
-    {        
+    {
         items = new List<Item>();
         //заполняю список пустыми предметами
         for (int i = 0; i < CellContainer.transform.childCount; i++)
@@ -38,7 +40,7 @@ public class Inventory : MonoBehaviour
         {
             items.Add(EmptyItem);
         }
-
+        GameManager.instance.GetSavedItems();
         DisplayItems();
         CountingEquipmentBonus();
     }
@@ -92,7 +94,7 @@ public class Inventory : MonoBehaviour
         }
     }
 
-    private Color GetColorByRarity(int rarityId)
+    public Color GetColorByRarity(int rarityId)
     {
         Color color;
 
@@ -122,14 +124,15 @@ public class Inventory : MonoBehaviour
     }
 
     //добавление предмета в первую пустую ячейку
-    public void AddNewItem(Item pickedItem)
+    public void AddNewItem(Item pickedItem, bool isPicked)
     {
         for (int i = 0; i < items.Count; i++)
         {
             if (items[i].Id == 0) //если ячейка пустая
             {
                 items[i] = pickedItem.GetComponent<Item>();
-                Destroy(pickedItem.gameObject);
+                if (isPicked)
+                    Destroy(pickedItem.gameObject);
                 DisplayItems();
                 break;
             }
@@ -184,6 +187,7 @@ public class Inventory : MonoBehaviour
             ClearAllItemsToWhite();
             HotBarContainer.transform.GetChild(0).GetComponent<Image>().color = SelectedColor;
             CountingEquipmentBonus();
+            TurnDescription();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha2))
         {
@@ -191,6 +195,7 @@ public class Inventory : MonoBehaviour
             ClearAllItemsToWhite();
             HotBarContainer.transform.GetChild(1).GetComponent<Image>().color = SelectedColor;
             CountingEquipmentBonus();
+            TurnDescription();
         }
         else if (Input.GetKeyDown(KeyCode.Alpha3))
         {
@@ -198,6 +203,7 @@ public class Inventory : MonoBehaviour
             ClearAllItemsToWhite();
             HotBarContainer.transform.GetChild(2).GetComponent<Image>().color = SelectedColor;
             CountingEquipmentBonus();
+            TurnDescription();
         }
     }
 
@@ -211,7 +217,7 @@ public class Inventory : MonoBehaviour
         if (items[SelectedItemIndex].Id != 0)
         {
             //заспавнить его префаб возле персонажа
-            var dropItem = Instantiate(Resources.Load<GameObject>(items[SelectedItemIndex].PrefabPath), player.position, player.rotation);
+            var dropItem = Instantiate(Resources.Load<GameObject>(items[SelectedItemIndex].PrefabPath), new Vector3(player.position.x + 1f, player.position.y, player.position.z), player.rotation);
             //установить ему редкость оригинала
             dropItem.GetComponent<Item>().Rarity = items[SelectedItemIndex].Rarity;
             //заменить на пустой предмет в списке
@@ -264,7 +270,7 @@ public class Inventory : MonoBehaviour
             CriticalDamageChance += items[SelectedItemIndex].CDC * items[SelectedItemIndex].Rarity;
         }
 
-        PlayerProperties.instance.CountStats(HealthPoints, DamagePoints, MovementBaseSpeed, AttackSpeed, CriticalDamageChance);
+        playerProperties.CountStats(HealthPoints, DamagePoints, MovementBaseSpeed, AttackSpeed, CriticalDamageChance);
     }
 
     public string GetTypeOfSelectedItem()
@@ -281,5 +287,81 @@ public class Inventory : MonoBehaviour
     public Item GetSelectedItem()
     {
         return items[SelectedItemIndex];
+    }
+    public void TurnDescription()
+    {
+        //переключение панели
+        if (DescriptionPanel.transform.GetChild(0).GetComponent<Text>().text == items[SelectedItemIndex].NameItem)
+            DescriptionPanel.SetActive(!DescriptionPanel.activeSelf);
+        else
+        {
+            DescriptionPanel.SetActive(true);
+            DescriptionPanel.transform.GetChild(0).GetComponent<Text>().text = items[SelectedItemIndex].NameItem;
+        }
+
+        //очищаю все поля
+        for (int z = 1; z < DescriptionPanel.transform.childCount; z++)
+        {
+            DescriptionPanel.transform.GetChild(z).GetComponent<Text>().text = "";
+        }
+
+        int Rarity = items[SelectedItemIndex].Rarity;
+        int i = 1;
+        if (items[SelectedItemIndex].HP != 0)
+        {
+            DescriptionPanel.transform.GetChild(i).GetComponent<Text>().text = "+ " + items[SelectedItemIndex].HP * Rarity + " к очкам здоровья";
+            i += 1;
+        }
+        if (items[SelectedItemIndex].DP != 0)
+        {
+            DescriptionPanel.transform.GetChild(i).GetComponent<Text>().text = "+ " + items[SelectedItemIndex].DP * Rarity + " к урону";
+            i += 1;
+        }
+        if (items[SelectedItemIndex].MBS != 0)
+        {
+            DescriptionPanel.transform.GetChild(i).GetComponent<Text>().text = "+ " + items[SelectedItemIndex].MBS * Rarity + " к скорости передвижения";
+            i += 1;            
+        }
+        if (items[SelectedItemIndex].AS != 0)
+        {
+            DescriptionPanel.transform.GetChild(i).GetComponent<Text>().text = "+ " + (items[SelectedItemIndex].AS * Rarity) + " к скорости атаки";
+            i += 1;
+        }
+        if (items[SelectedItemIndex].CDC != 0)
+        {
+            DescriptionPanel.transform.GetChild(i).GetComponent<Text>().text = "+ " + (items[SelectedItemIndex].CDC * Rarity) + " к шансу критического урона";
+        }
+    }
+
+    public void SaveItems()
+    {
+        PlayerPrefs.DeleteKey("1SavedItemId");
+        PlayerPrefs.DeleteKey("2SavedItemId");
+        PlayerPrefs.DeleteKey("3SavedItemId");
+
+        int savedItems = 1;
+        int limit = 500;
+        while(savedItems < 4 && limit-- > 0) {
+            int randomItem = Random.Range(0, items.Count);
+            if (items[randomItem].Id != 0) //если предмет не пустой
+            {
+                for (int i = 1; i <= savedItems; i++)
+                {
+                    if (PlayerPrefs.GetInt(i.ToString() + "SavedItemId") != items[randomItem].Id) //если его уже не выбрали
+                    {
+                        PlayerPrefs.SetInt(savedItems.ToString() + "SavedItemId", items[randomItem].Id);
+                        PlayerPrefs.SetInt(savedItems.ToString() + "SavedItemRarity", items[randomItem].Rarity);
+
+                        savedItems += 1;
+                        return;
+                    }
+                }                            
+            }
+        }
+    }
+
+    public Sprite GetSpriteCurrentItem()
+    {
+        return items[SelectedItemIndex].Icon;
     }
 }

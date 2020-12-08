@@ -63,5 +63,7 @@ public class Slot : MonoBehaviour, IDropHandler
         GetComponent<Image>().color = Inventory.instance.SelectedColor;
 
         Inventory.instance.CountingEquipmentBonus();
-    }    
+
+        Inventory.instance.TurnDescription();
+    }
 }

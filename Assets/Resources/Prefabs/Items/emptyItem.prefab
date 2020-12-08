@@ -43,8 +43,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6aa06456faec83d499759d159df01948, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  NameItem: empty
+  NameItem: 
   Id: 0
   Rarity: 0
   Icon: {fileID: 0}
-  Prefab: {fileID: 3407557401610309705}
+  PrefabPath: 
+  AdditionalObjectPath: 
+  itemType: 0
+  HP: 0
+  DP: 0
+  MBS: 0
+  AS: 0
+  CDC: 0

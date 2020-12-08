@@ -11,7 +11,6 @@ public class Bomb : MonoBehaviour
 
     private void Explosion()
     {
-        print("BOOOOOOOOOOOOOOOOOOOOOM");
         Collider2D[] hitObjects = Physics2D.OverlapCircleAll(transform.position, 2f);
         foreach (Collider2D hitObject in hitObjects)
         {

@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class Chest : MonoBehaviour
 {
+    public bool isOpen = false;
     public Sprite OpenSprite;
     [Range(0, 1)]
     public float ChanceOfDefaultDrop = 0.6f;
@@ -29,9 +30,10 @@ public class Chest : MonoBehaviour
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (currentRoom.isSecretRoom && collision.CompareTag("Player"))
+        if (collision.CompareTag("Player"))
         {
-            OpenChest();
+            if (currentRoom.isSecretRoom || isOpen)
+                OpenChest();
         }
     }
 }
