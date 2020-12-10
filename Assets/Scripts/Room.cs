@@ -83,6 +83,9 @@ public class Room : MonoBehaviour
     }
     public void OpenRoomAndChest()
     {
+        if (gameObject == null)
+            return;
+
         if (Enemies.transform.childCount == 1)
         {
             if (isClosed)

@@ -98,14 +98,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NameItem: "\u041F\u043B\u0430\u0449"
   Id: 11
-  Rarity: 1
+  Rarity: 4
   Icon: {fileID: 21300000, guid: 60a751e3d47c4f548aca3c525be3f48d, type: 3}
   PrefabPath: Prefabs/Items/Item11
   AdditionalObjectPath: 
   itemType: 1
   HP: 35
   DP: 0
-  MBS: 1
+  MBS: 0.5
   AS: 0
   CDC: 0
 --- !u!61 &1455342670045147525

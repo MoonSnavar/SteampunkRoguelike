@@ -101,22 +101,22 @@ public class Inventory : MonoBehaviour
         switch (rarityId)
         {
             default:
-                color = new Color32(193, 188, 94, 255);
+                color = new Color32(193, 188, 94, 75);
                 break;
             case 1:
-                color = new Color32(222,64,66, 255);
+                color = new Color32(222,64,66, 75);
                 break;
             case 2:
-                color = new Color32(255, 154, 73, 255);
+                color = new Color32(255, 154, 73, 75);
                 break;
             case 3:
-                color = new Color32(255, 255, 74, 255);
+                color = new Color32(255, 255, 74, 75);
                 break;
             case 4:
-                color = new Color32(74, 255, 127, 255);
+                color = new Color32(74, 255, 127, 75);
                 break;
             case 5:
-                color = new Color32(74, 255, 204, 255);
+                color = new Color32(74, 255, 204, 75);
                 break;
         }
 
@@ -341,19 +341,28 @@ public class Inventory : MonoBehaviour
 
         int savedItems = 1;
         int limit = 500;
-        while(savedItems < 4 && limit-- > 0) {
+        while(savedItems < 4 && limit > 0) {
+            limit -= 1;
+            if (savedItems == 4)
+                return;
+
             int randomItem = Random.Range(0, items.Count);
             if (items[randomItem].Id != 0) //если предмет не пустой
             {
-                for (int i = 1; i <= savedItems; i++)
+                //проверка на повторение сохраняемого предмета
+                int count = savedItems;
+                for (int i = 1; i <= count; i++)
                 {
-                    if (PlayerPrefs.GetInt(i.ToString() + "SavedItemId") != items[randomItem].Id) //если его уже не выбрали
+                    if (PlayerPrefs.GetInt(i.ToString() + "SavedItemId") == items[randomItem].Id) //если его уже не выбрали
+                    {                        
+                        break;
+                    }
+                    else if (i == savedItems)
                     {
                         PlayerPrefs.SetInt(savedItems.ToString() + "SavedItemId", items[randomItem].Id);
                         PlayerPrefs.SetInt(savedItems.ToString() + "SavedItemRarity", items[randomItem].Rarity);
 
-                        savedItems += 1;
-                        return;
+                        savedItems += 1;                        
                     }
                 }                            
             }

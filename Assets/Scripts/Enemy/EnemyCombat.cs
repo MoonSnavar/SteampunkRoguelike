@@ -63,11 +63,13 @@ public class EnemyCombat : MonoBehaviour
                         if (animator != null)
                             animator.SetTrigger("AttackDown");
                     }
-                }              
-
-                Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, AttackSize, PlayerLayer);
-                if (hitPlayers.Length > 0)
-                    hitPlayers[0].GetComponent<PlayerProperties>().TakeDamage(damagePoints);                
+                }
+                if (attackPoint != null)
+                {
+                    Collider2D[] hitPlayers = Physics2D.OverlapCircleAll(attackPoint.position, AttackSize, PlayerLayer);
+                    if (hitPlayers.Length > 0)
+                        hitPlayers[0].GetComponent<PlayerProperties>().TakeDamage(damagePoints);
+                }
 
                 break;
             case EnemyType.Melle:

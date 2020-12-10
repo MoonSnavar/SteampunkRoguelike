@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class EnemyProperties : MonoBehaviour
 {    
@@ -13,15 +12,21 @@ public class EnemyProperties : MonoBehaviour
     public float ChanceOfDefaultDrop = 0.8f;    
     private Item[] items;
     private float chanceOfDrop = 0.4f;
-    private Room currentRoom;    
+    private Room currentRoom;
+    private AudioSource enemyHit;
 
     private void Awake()
     {
         items = GameManager.instance.items;
+        enemyHit = GetComponent<AudioSource>();
+        HealthPoints *= GameManager.instance.LevelNumber;
     }
 
     public void TakeDamage(int damage)
     {        
+        if (!enemyHit.isPlaying)
+            enemyHit.Play();
+
         HealthPoints -= damage;
 
         if (HealthPoints <= 0)
@@ -37,9 +42,8 @@ public class EnemyProperties : MonoBehaviour
 
                 Instantiate(Resources.Load<GameObject>(items[randomIndex].PrefabPath), transform.position, transform.rotation);                
             }
-            Destroy(gameObject);                    
+            Destroy(gameObject, 0.15f);                    
         }
-        
     }
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -49,7 +53,8 @@ public class EnemyProperties : MonoBehaviour
         }
     }
     private void OnDestroy()
-    {        
-        currentRoom?.OpenRoomAndChest();
+    {   
+        if (currentRoom != null)
+            currentRoom.OpenRoomAndChest();
     }    
 }

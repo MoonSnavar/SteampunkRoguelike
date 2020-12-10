@@ -103,11 +103,11 @@ MonoBehaviour:
   PrefabPath: Prefabs/Items/Item4
   AdditionalObjectPath: 
   itemType: 3
-  HP: 0
+  HP: 1
   DP: 3
   MBS: 0
   AS: 0
-  CDC: 0
+  CDC: 0.1
 --- !u!61 &2200442616039647713
 BoxCollider2D:
   m_ObjectHideFlags: 0

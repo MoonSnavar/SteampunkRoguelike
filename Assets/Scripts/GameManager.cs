@@ -19,14 +19,14 @@ public class GameManager : MonoBehaviour
 
         Keys = PlayerPrefs.GetInt("Keys");
         LevelNumber = PlayerPrefs.GetInt("Level");
-
+        print("Keys - " + Keys);
         if (isLobby)
         {
             if (Keys == 0)
                 lobbyDoors[0].isClosed = false;
             else
             {
-                for (int i = 0; i < Keys; i++)
+                for (int i = 0; i <= Keys; i++)
                 {
                     lobbyDoors[i].isClosed = false;
                 }
@@ -35,10 +35,13 @@ public class GameManager : MonoBehaviour
     }
     private void Start()
     {
-        for (int i = 0; i < Keys - 1; i++)
+        if (isLobby)
         {
-            if (i < 3)
-                KeysImages.GetChild(i).gameObject.SetActive(true);
+            for (int i = 0; i < Keys - 1; i++)
+            {
+                if (i < 3)
+                    KeysImages.GetChild(i).gameObject.SetActive(true);
+            }
         }
     }
 

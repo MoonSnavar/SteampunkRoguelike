@@ -99,7 +99,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NameItem: "\u041F\u0438\u0441\u0442\u043E\u043B\u0435\u0442-\u043F\u0443\u043B\u0435\u043C\u0435\u0442"
   Id: 17
-  Rarity: 1
+  Rarity: 3
   Icon: {fileID: 4278688042836011639, guid: dc9558fd85e108e48b8089492efa4f53, type: 3}
   PrefabPath: Prefabs/Items/Item17
   AdditionalObjectPath: 
@@ -107,7 +107,7 @@ MonoBehaviour:
   HP: 0
   DP: 1
   MBS: 0
-  AS: 0.4
+  AS: 0.2
   CDC: 0.1
 --- !u!61 &4876083248546816893
 BoxCollider2D:

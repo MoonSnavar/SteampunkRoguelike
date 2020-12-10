@@ -4,6 +4,7 @@ public class MenuManager : MonoBehaviour
 {
     public GameObject[] inGameObj;
     public GameObject Menu;
+    public GameObject EndText;
 
     private void Start()
     {
@@ -30,7 +31,11 @@ public class MenuManager : MonoBehaviour
 
     public void Exit()
     {
-        Application.Quit();
-        PlayerPrefs.DeleteAll();
+        Application.Quit();        
+    }
+
+    public void TurnEnd(bool enable)
+    {
+        EndText.SetActive(enable);
     }
 }

@@ -103,7 +103,7 @@ MonoBehaviour:
   PrefabPath: Prefabs/Items/Item6
   AdditionalObjectPath: 
   itemType: 5
-  HP: 5
+  HP: 15
   DP: 0
   MBS: 0
   AS: 0

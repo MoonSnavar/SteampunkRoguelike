@@ -10,6 +10,9 @@ public class SelectRandom : MonoBehaviour
         if (isEnemy)
             CountToLeave += GameManager.instance.LevelNumber;
 
+        if (CountToLeave > transform.childCount)
+            CountToLeave = transform.childCount;
+
         while (transform.childCount > CountToLeave)
         {
             Transform childToDestroy = transform.GetChild(Random.Range(0, transform.childCount));

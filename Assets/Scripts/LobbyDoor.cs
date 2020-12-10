@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Tilemaps;
 
 public class LobbyDoor : MonoBehaviour
 {
@@ -12,6 +13,8 @@ public class LobbyDoor : MonoBehaviour
     {
         if (!isClosed && isFinalDoor)
             Destroy(gameObject);
+        else if (!isClosed)
+            GetComponent<TilemapRenderer>().enabled = false;
     }
 
     private void OnTriggerEnter2D(Collider2D collision)

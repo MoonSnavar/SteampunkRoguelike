@@ -7,10 +7,11 @@ public class PlayerController : MonoBehaviour
     public static PlayerController instance;
     public GameObject InventoryObject;
     public Transform Graphics;
+    public AudioSource PickupSound;
 
     private PlayerProperties playerProperties;
-    private float currentSpeed;
     private Vector2 movementDirection;
+    private float currentSpeed;
     private float movementSpeed;
 
     private Room currentRoom;
@@ -196,18 +197,17 @@ public class PlayerController : MonoBehaviour
             //кулдаун подбора
             if (Time.time > nextPickupTime)
             {
+                if (!PickupSound.isPlaying)
+                    PickupSound.Play();
+
                 Inventory.instance.AddNewItem(collision.gameObject.GetComponent<Item>(), true);
                 nextPickupTime = Time.time + 0.2f;
             }                   
         }
     }
-    private void OnTriggerEnter2D(Collider2D collision)
+    private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.CompareTag("Room"))
-        {
-            StartCoroutine(MoveCamera(new Vector3(collision.transform.position.x, collision.transform.position.y, -10), collision.GetComponent<Room>()));
-        }
-        else if (collision.CompareTag("Exit"))
+        if (collision.gameObject.CompareTag("Exit"))
         {
             int currentKeys = PlayerPrefs.GetInt("Keys");
             if (GameManager.instance.LevelNumber + 1 > currentKeys && GameManager.instance.LevelNumber + 1 < 5)
@@ -216,12 +216,29 @@ public class PlayerController : MonoBehaviour
             SceneManager.LoadScene(0);
         }
     }
-
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Room"))
+        {
+            StartCoroutine(MoveCamera(new Vector3(collision.transform.position.x, collision.transform.position.y, -10), collision.GetComponent<Room>()));
+        }
+        else if (collision.CompareTag("End"))
+        {
+            collision.GetComponent<MenuManager>().TurnEnd(true);
+        }
+    }
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("End"))
+        {
+            collision.GetComponent<MenuManager>().TurnEnd(false);
+        }
+    }
     IEnumerator MoveCamera(Vector3 moveTo, Room room)
     {
         while(GameManager.instance.Camera.position != moveTo)
         {
-            GameManager.instance.Camera.position = Vector3.MoveTowards(GameManager.instance.Camera.position, moveTo, Time.deltaTime * 12);
+            GameManager.instance.Camera.position = Vector3.MoveTowards(GameManager.instance.Camera.position, moveTo, Time.deltaTime * 10);
             yield return null;
             if (GameManager.instance.Camera.position == moveTo)
             {

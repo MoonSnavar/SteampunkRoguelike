@@ -49,7 +49,7 @@ public class RoomPlacer : MonoBehaviour
         }
 
         Room newRoom;
-        if (i == maxRooms - 6)
+        if (i == maxRooms - 8)
         {
             newRoom = Instantiate(SecretRoom);
         }
@@ -85,7 +85,7 @@ public class RoomPlacer : MonoBehaviour
     }
     
     private bool ConnectToRoom(Room room, Vector2Int pos)
-    {
+    {       
         int maxX = spawnedRooms.GetLength(0) - 1;
         int maxY = spawnedRooms.GetLength(1) - 1;
 
@@ -100,6 +100,8 @@ public class RoomPlacer : MonoBehaviour
 
         Vector2Int selectedDirection = neighbours[Random.Range(0, neighbours.Count)];
         Room selectedRoom = spawnedRooms[pos.x + selectedDirection.x, pos.y + selectedDirection.y];
+        
+        if (room.isLastRoom && selectedRoom.isSecretRoom) return false;
 
         if (selectedDirection == Vector2Int.up)
         {

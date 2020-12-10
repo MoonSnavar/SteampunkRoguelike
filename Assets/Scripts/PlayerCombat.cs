@@ -2,9 +2,12 @@
 
 public class PlayerCombat : MonoBehaviour
 {
+    public AudioSource ShootSound;
+    public AudioSource MeleeAttackSound;
     public SpriteRenderer GunSprite;
     public SpriteRenderer WeaponSprite;
     public GameObject Bullet;
+    public Transform ShootPoint;
     public Transform AttackPoint;
     public float AttackSize;
     public LayerMask EnemyLayer;
@@ -33,6 +36,9 @@ public class PlayerCombat : MonoBehaviour
                 hitEnemy.GetComponent<EnemyProperties>().TakeDamage(damagePoints);
         }
         AnimationMelee();
+
+        if (!MeleeAttackSound.isPlaying)
+            MeleeAttackSound.Play();
     }
 
     private void AnimationMelee()
@@ -97,7 +103,7 @@ public class PlayerCombat : MonoBehaviour
 
         damagePoints = playerProperties.GetDamagePoints();
      
-        var bulletObject = Instantiate(Bullet, AttackPoint.position, AttackPoint.rotation);
+        var bulletObject = Instantiate(Bullet, ShootPoint.position, AttackPoint.rotation);
 
         //вращаю объект в сторону точки атаки
         bulletObject.transform.eulerAngles = new Vector3(0, 0, Mathf.Atan2(AttackPoint.localPosition.y, AttackPoint.localPosition.x) * Mathf.Rad2Deg);
@@ -105,6 +111,9 @@ public class PlayerCombat : MonoBehaviour
         bulletObject.GetComponent<Bullet>().DamagePoints = damagePoints;
 
         AnimationShoot();
+
+        if (!ShootSound.isPlaying)
+            ShootSound.Play();
     }
 
     public void ChangeAttackDirection(float x, float y)

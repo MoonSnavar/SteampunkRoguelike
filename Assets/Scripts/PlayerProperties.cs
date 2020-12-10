@@ -30,10 +30,12 @@ public class PlayerProperties : MonoBehaviour
     public Text CDCText;
 
     private int maxHp;
+    private AudioSource hitSound;
 
     private void Awake()
     {
-        instance = this;           
+        instance = this;
+        hitSound = GetComponent<AudioSource>();
     }
     private void Start()
     {
@@ -70,6 +72,9 @@ public class PlayerProperties : MonoBehaviour
 
         CheckHealPoints();
         DisplayProperties();
+
+        if (!hitSound.isPlaying)
+            hitSound.Play();
     }
 
     public void CheckHealPoints()
