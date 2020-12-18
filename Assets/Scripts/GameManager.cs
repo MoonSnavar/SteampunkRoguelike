@@ -26,7 +26,7 @@ public class GameManager : MonoBehaviour
                 lobbyDoors[0].isClosed = false;
             else
             {
-                for (int i = 0; i <= Keys; i++)
+                for (int i = 0; i < Keys; i++)
                 {
                     lobbyDoors[i].isClosed = false;
                 }

@@ -99,7 +99,7 @@ MonoBehaviour:
   NameItem: "\u0414\u0432\u0443\u0445\u043A\u043B\u0438\u043D\u043A\u043E\u0432\u044B\u0439
     \u043C\u0435\u0447"
   Id: 15
-  Rarity: 2
+  Rarity: 1
   Icon: {fileID: 21300000, guid: 7cc39bf2e47c6cf43a9491fd09866d9a, type: 3}
   PrefabPath: Prefabs/Items/Item15
   AdditionalObjectPath: 

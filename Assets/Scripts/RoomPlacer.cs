@@ -31,6 +31,7 @@ public class RoomPlacer : MonoBehaviour
 
     private void PlaceOneRoom(int i)
     {
+        //получение возможных свободных мест, рядом с уже созданными комнатами 
         HashSet<Vector2Int> vacantPlaces = new HashSet<Vector2Int>();
         for (int x = 0; x < spawnedRooms.GetLength(0); x++)
         {

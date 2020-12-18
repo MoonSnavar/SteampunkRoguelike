@@ -98,7 +98,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   NameItem: "\u041A\u043E\u0436\u0430\u043D\u043D\u044B\u0439 \u043F\u043B\u0430\u0449"
   Id: 10
-  Rarity: 2
+  Rarity: 1
   Icon: {fileID: 21300000, guid: eeed166e0ad4e204aa22efae8198e88b, type: 3}
   PrefabPath: Prefabs/Items/Item10
   AdditionalObjectPath: 
