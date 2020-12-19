@@ -31,7 +31,7 @@ public class MenuManager : MonoBehaviour
 
     public void Exit()
     {
-        Application.Quit();        
+        Application.Quit();          
     }
 
     public void TurnEnd(bool enable)
